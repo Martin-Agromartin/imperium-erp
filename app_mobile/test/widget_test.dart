@@ -8,23 +8,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:app_mobile/main.dart';
+import 'package:app_mobile/app/app.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('shows login page', (WidgetTester tester) async {
+    await tester.pumpWidget(const ImperiumApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('Imperium ERP'), findsOneWidget);
+    expect(find.text('Ingresá para continuar'), findsOneWidget);
+    expect(find.text('Ingresar'), findsOneWidget);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+  testWidgets('valid credentials navigate to dashboard', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const ImperiumApp());
+
+    await tester.enterText(find.byType(EditableText).at(0), 'admin@demo.com');
+    await tester.enterText(find.byType(EditableText).at(1), 'secret');
+    await tester.tap(find.text('Ingresar'));
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pumpAndSettle();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Panel principal'), findsOneWidget);
   });
 }
