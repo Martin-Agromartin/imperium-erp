@@ -2,25 +2,25 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
 import '../theme/app_radius.dart';
-import '../theme/app_spacing.dart';
 
 class AppCard extends StatelessWidget {
-  const AppCard({super.key, required this.child, this.padding});
-
   final Widget child;
-  final EdgeInsetsGeometry? padding;
+  final VoidCallback? onTap;
+
+  const AppCard({super.key, required this.child, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+    return Card(
+      color: AppColors.card,
+      elevation: 1,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.lg),
       ),
-      child: Padding(
-        padding: padding ?? const EdgeInsets.all(AppSpacing.lg),
-        child: child,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        onTap: onTap,
+        child: Padding(padding: const EdgeInsets.all(16), child: child),
       ),
     );
   }

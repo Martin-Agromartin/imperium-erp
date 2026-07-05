@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'routes/app_router.dart';
 import 'theme/app_theme.dart';
 
 class ImperiumApp extends StatelessWidget {
@@ -10,10 +9,21 @@ class ImperiumApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Imperium ERP',
+
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      initialRoute: AppRouter.login,
-      onGenerateRoute: AppRouter.onGenerateRoute,
+
+      theme: AppTheme.lightTheme,
+
+      home: Scaffold(
+        appBar: AppBar(title: const Text("Imperium ERP")),
+
+        body: const Center(
+          child: Text(
+            "Sistema de Gestión",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
     );
   }
 }

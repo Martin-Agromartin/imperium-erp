@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:imperium_erp/app/app.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'app/app.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-void main() {
-  runApp(const ImperiumApp());
+  // En próximas versiones inicializaremos Firebase aquí.
+  // await Firebase.initializeApp();
+
+  runApp(ProviderScope(child: const ImperiumApp()));
 }

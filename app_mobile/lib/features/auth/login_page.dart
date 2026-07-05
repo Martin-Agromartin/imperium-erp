@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-
-import '../../app/routes/app_router.dart';
-import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/app_button.dart';
-import '../../core/widgets/app_card.dart';
-import '../../core/widgets/app_text_field.dart';
+import 'package:go_router/go_router.dart';
+import '../../app/widgets/imperium_button.dart';
+import '../../app/widgets/imperium_logo.dart';
+import '../../app/widgets/imperium_text_field.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,108 +12,147 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _isSubmitting = false;
+  final usuarioController = TextEditingController();
+  final passwordController = TextEditingController();
 
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    setState(() => _isSubmitting = true);
-    await Future<void>.delayed(const Duration(milliseconds: 350));
-
-    if (!mounted) {
-      return;
-    }
-
-    setState(() => _isSubmitting = false);
-    Navigator.of(context).pushReplacementNamed(AppRouter.dashboard);
-  }
+  bool recordar = false;
+  bool ocultarPassword = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420),
-              child: AppCard(
-                child: Form(
-                  key: _formKey,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+
+            end: Alignment.bottomCenter,
+
+            colors: [Color(0xff0B1F3A), Color(0xff163D70)],
+          ),
+        ),
+
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(25),
+
+              child: Card(
+                elevation: 10,
+
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+
+                child: Padding(
+                  padding: const EdgeInsets.all(30),
+
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
-                        Icons.business_center_outlined,
-                        color: AppColors.primary,
-                        size: 48,
+                      const ImperiumLogo(size: 110),
+
+                      const SizedBox(height: 25),
+
+                      const Text(
+                        "Bienvenido",
+
+                        style: TextStyle(
+                          fontSize: 30,
+
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      const SizedBox(height: AppSpacing.md),
-                      Text(
-                        'Imperium ERP',
+
+                      const SizedBox(height: 8),
+
+                      const Text(
+                        "Sistema de Gestión de Reparto",
+
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(fontWeight: FontWeight.w700),
                       ),
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        'Ingresá para continuar',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium
-                            ?.copyWith(color: AppColors.mutedText),
+
+                      const SizedBox(height: 35),
+
+                      ImperiumTextField(
+                        controller: usuarioController,
+
+                        label: "Usuario",
+
+                        icon: Icons.person,
                       ),
-                      const SizedBox(height: AppSpacing.xl),
-                      AppTextField(
-                        label: 'Email',
-                        hintText: 'usuario@empresa.com',
-                        controller: _emailController,
-                        prefixIcon: Icons.mail_outline,
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        validator: (value) {
-                          final text = value?.trim() ?? '';
-                          if (text.isEmpty) {
-                            return 'Ingresá tu email';
-                          }
-                          if (!text.contains('@')) {
-                            return 'Ingresá un email válido';
-                          }
-                          return null;
+
+                      const SizedBox(height: 20),
+
+                      TextField(
+                        controller: passwordController,
+
+                        obscureText: ocultarPassword,
+
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.lock),
+
+                          labelText: "Contraseña",
+
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                ocultarPassword = !ocultarPassword;
+                              });
+                            },
+
+                            icon: Icon(
+                              ocultarPassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 15),
+
+                      CheckboxListTile(
+                        value: recordar,
+
+                        contentPadding: EdgeInsets.zero,
+
+                        title: const Text("Recordarme"),
+
+                        controlAffinity: ListTileControlAffinity.leading,
+
+                        onChanged: (valor) {
+                          setState(() {
+                            recordar = valor!;
+                          });
                         },
                       ),
-                      const SizedBox(height: AppSpacing.md),
-                      AppTextField(
-                        label: 'Contraseña',
-                        controller: _passwordController,
-                        prefixIcon: Icons.lock_outline,
-                        obscureText: true,
-                        textInputAction: TextInputAction.done,
-                        validator: (value) {
-                          if ((value ?? '').isEmpty) {
-                            return 'Ingresá tu contraseña';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      AppButton(
-                        label: 'Ingresar',
+
+                      const SizedBox(height: 10),
+
+                      ImperiumButton(
+                        text: "INGRESAR",
+
                         icon: Icons.login,
-                        isLoading: _isSubmitting,
-                        onPressed: _submit,
+
+                        onPressed: () {
+                          context.go("/dashboard");
+                        },
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      TextButton(
+                        onPressed: () {},
+
+                        child: const Text("¿Olvidaste tu contraseña?"),
+                      ),
+
+                      const SizedBox(height: 15),
+
+                      const Text(
+                        "Versión 1.0.0",
+
+                        style: TextStyle(color: Colors.grey),
                       ),
                     ],
                   ),

@@ -1,52 +1,65 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_radius.dart';
-import '../theme/app_spacing.dart';
+import '../theme/app_colors.dart';
+
+enum AppButtonType { primary, secondary, danger, success, outlined }
 
 class AppButton extends StatelessWidget {
-  const AppButton({
-    super.key,
-    required this.label,
-    required this.onPressed,
-    this.icon,
-    this.isLoading = false,
-  });
-
-  final String label;
+  final String text;
   final VoidCallback? onPressed;
   final IconData? icon;
-  final bool isLoading;
+  final bool loading;
+  final AppButtonType type;
+
+  const AppButton({
+    super.key,
+    required this.text,
+    this.onPressed,
+    this.icon,
+    this.loading = false,
+    this.type = AppButtonType.primary,
+  });
+
+  Color _backgroundColor() {
+    switch (type) {
+      case AppButtonType.primary:
+        return AppColors.primary;
+      case AppButtonType.secondary:
+        return AppColors.secondary;
+      case AppButtonType.success:
+        return AppColors.success;
+      case AppButtonType.danger:
+        return AppColors.danger;
+      case AppButtonType.outlined:
+        return Colors.transparent;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final child = isLoading
-        ? const SizedBox.square(
-            dimension: 20,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          )
-        : Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon != null) ...[
-                Icon(icon, size: 20),
-                const SizedBox(width: AppSpacing.sm),
-              ],
-              Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
-            ],
-          );
-
     return SizedBox(
+      height: 52,
       width: double.infinity,
-      height: 48,
-      child: FilledButton(
-        onPressed: isLoading ? null : onPressed,
-        style: FilledButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.md),
-          ),
+      child: ElevatedButton.icon(
+        onPressed: loading ? null : onPressed,
+        icon: loading
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            : Icon(icon),
+        label: Text(text),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: _backgroundColor(),
+          foregroundColor: type == AppButtonType.outlined
+              ? AppColors.primary
+              : Colors.white,
+          elevation: 0,
         ),
-        child: child,
       ),
     );
   }
